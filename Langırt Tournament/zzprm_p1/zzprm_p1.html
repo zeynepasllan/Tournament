@@ -1,0 +1,787 @@
+<!DOCTY "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xht />
+<title>ZZPRM_P1</title>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZZPRM_P1</h2>
+<h3> Description: </h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZZPRM_P1<br />
+*&---------------------------------------------------------------------*<br />
+*&<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZZPRM_P1.<br />
+<br />
+TABLES: ztrn_t001 , ztrn_t002 , ztrn_t005, ztrn_t006, ztrn_t007.<br />
+DATA :<br />
+&nbsp;&nbsp;lv_min&nbsp;&nbsp;&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;sayac&nbsp;type&nbsp;i,<br />
+&nbsp;&nbsp;lv_min2&nbsp;&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;lv_max&nbsp;&nbsp;&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;lv_max2&nbsp;&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;lv_index&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;lv_rnd&nbsp;&nbsp;&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;lv_rnd2&nbsp;&nbsp;TYPE&nbsp;i,<br />
+&nbsp;&nbsp;lv_i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;i.<br />
+DATA: gt_trn1 TYPE TABLE OF ztrn_t001,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn1&nbsp;TYPE&nbsp;ztrn_t001,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ps_selfield&nbsp;type&nbsp;slis_selfield,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_trn2&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ztrn_t002,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2&nbsp;TYPE&nbsp;ztrn_t002,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn6&nbsp;TYPE&nbsp;ztrn_t006,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7&nbsp;TYPE&nbsp;ztrn_t007,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_trn3&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ztrn_t003,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_trn6&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ztrn_t006,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_trn7&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ztrn_t007,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn3&nbsp;TYPE&nbsp;ztrn_t003.<br />
+DATA: gs_trn4 TYPE ztrn_t005,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_trn4&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ztrn_t005.<br />
+<br />
+lv_min = 1.<br />
+lv_min2 = 1.<br />
+lv_max = 40.<br />
+lv_max2 = 20.<br />
+lv_i = 2.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t001&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn1&nbsp;WHERE&nbsp;deletelog&nbsp;EQ&nbsp;space.<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+do 1 times.<br />
+<br />
+&nbsp;&nbsp;SELECT&nbsp;*&nbsp;&nbsp;FROM&nbsp;ztrn_t002&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn2&nbsp;&nbsp;WHERE&nbsp;deletelog&nbsp;EQ&nbsp;space.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t001&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn1&nbsp;WHERE&nbsp;deletelog&nbsp;EQ&nbsp;space.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;gt_trn2&nbsp;is&nbsp;initial.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;message&nbsp;'Tüm&nbsp;takýmlar&nbsp;dolu.'&nbsp;type&nbsp;'I'&nbsp;display&nbsp;like&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;exit.<br />
+&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn2&nbsp;LINES&nbsp;lv_max2.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;lv_max&nbsp;=&nbsp;lv_max&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn1&nbsp;LINES&nbsp;lv_max.<br />
+&nbsp;&nbsp;DATA&nbsp;ls_line&nbsp;TYPE&nbsp;ztrn_t002.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'QF05_RANDOM_INTEGER'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_max&nbsp;&nbsp;&nbsp;=&nbsp;lv_max2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_min&nbsp;&nbsp;&nbsp;=&nbsp;lv_min2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_rnd2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invalid_input&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+<br />
+<br />
+&nbsp;&nbsp;ls_line&nbsp;=&nbsp;gt_trn2[&nbsp;lv_rnd2&nbsp;&nbsp;].<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t002&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn2.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t003&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn3.<br />
+&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t005&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;select&nbsp;*&nbsp;from&nbsp;ztrn_t006&nbsp;into&nbsp;table&nbsp;gt_trn6.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;select&nbsp;*&nbsp;from&nbsp;ztrn_t007&nbsp;into&nbsp;table&nbsp;gt_trn7.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn7&nbsp;LINES&nbsp;sayac.<br />
+<br />
+<br />
+&nbsp;&nbsp;SORT&nbsp;gt_trn3&nbsp;ASCENDING&nbsp;BY&nbsp;teamid.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;SORT&nbsp;gt_trn2&nbsp;ASCENDING&nbsp;BY&nbsp;teamid.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;ls_line&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;gt_trn2&nbsp;INTO&nbsp;DATA(ls_line).<br />
+<br />
+*SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t003&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn3.<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;gt_trn1&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;2.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;&nbsp;2&nbsp;times.<br />
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn1&nbsp;LINES&nbsp;lv_max.<br />
+&nbsp;&nbsp;DATA&nbsp;ls_line1&nbsp;TYPE&nbsp;ztrn_t001.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'QF05_RANDOM_INTEGER'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_max&nbsp;&nbsp;&nbsp;=&nbsp;lv_max<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_min&nbsp;&nbsp;&nbsp;=&nbsp;lv_min<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_rnd<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invalid_input&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+<br />
+<br />
+&nbsp;&nbsp;ls_line1&nbsp;=&nbsp;gt_trn1[&nbsp;lv_rnd&nbsp;].<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*SORT&nbsp;gt_trn1&nbsp;ASCENDING&nbsp;BY&nbsp;id.<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;NE&nbsp;0.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn3-personid&nbsp;=&nbsp;ls_line1-id.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn3-pname&nbsp;=&nbsp;ls_line1-name.<br />
+   </div>
+   <div class="codeComment">
+*gs_trn3-pname&nbsp;=&nbsp;'deneme'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn3-psurname&nbsp;=&nbsp;ls_line1-surname.<br />
+   </div>
+   <div class="codeComment">
+***************ls_line-teamid&nbsp;=&nbsp;gs_trn2-teamid.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn3-teamid&nbsp;=&nbsp;ls_line-teamid.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;gs_trn3&nbsp;TO&nbsp;gt_trn3.<br />
+   </div>
+   <div class="codeComment">
+*modify&nbsp;gt_trn3&nbsp;from&nbsp;gs_trn3.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t003&nbsp;FROM&nbsp;gs_trn3.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_line-deletelog&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t002&nbsp;FROM&nbsp;ls_line.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_line1-deletelog&nbsp;NE&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_line1-deletelog&nbsp;=&nbsp;'X'.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn1&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;ls_line1-id.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t001&nbsp;FROM&nbsp;ls_line1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;gs_trn2-deletelog&nbsp;NE&nbsp;'X'.<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+<br />
+if gs_trn7-teamid1 eq space.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;if&nbsp;gs_trn7-matchh&nbsp;eq&nbsp;space.<br />
+*&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'A'.<br />
+*&nbsp;&nbsp;endif.<br />
+<br />
+*&nbsp;&nbsp;loop&nbsp;at&nbsp;gt_trn7&nbsp;into&nbsp;gs_trn7.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;sayac&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'A'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'B'.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'C'.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;3.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'D'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'E'.<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;5.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'F'.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;6.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'G'.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif&nbsp;sayac&nbsp;=&nbsp;7.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'H'.<br />
+&nbsp;&nbsp;endif.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;modify&nbsp;gt_trn7&nbsp;from&nbsp;gs_trn7.<br />
+*endloop.<br />
+***********<br />
+***********<br />
+***********<br />
+***********<br />
+***********<br />
+***********<br />
+*if&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'&nbsp;'.<br />
+<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;gs_trn7-teamid1&nbsp;=&nbsp;ls_line-teamid.<br />
+gs_trn7-teamname1 = ls_line-teamname.<br />
+gs_trn7-personid11 = ls_line1-id.<br />
+gs_trn7-pname11 = ls_line1-name.<br />
+gs_trn7-psurname11 = ls_line1-surname.<br />
+<br />
+DELETE gt_trn1 WHERE id = ls_line1-id.<br />
+<br />
+else.<br />
+<br />
+gs_trn7-personid12 = ls_line1-id.<br />
+gs_trn7-pname12 = ls_line1-name.<br />
+gs_trn7-psurname12 = ls_line1-surname.<br />
+<br />
+DELETE gt_trn2 WHERE teamid = ls_line-teamid.<br />
+DELETE gt_trn1 WHERE id = ls_line1-id.<br />
+&nbsp;DELETE&nbsp;gt_trn7&nbsp;WHERE&nbsp;personid12&nbsp;=&nbsp;0.<br />
+endif.<br />
+APPEND gs_trn7 to gt_trn7.<br />
+<br />
+modify ztrn_t007 from gs_trn7.<br />
+<br />
+<br />
+&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+enddo.<br />
+<br />
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn2&nbsp;LINES&nbsp;lv_max2.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;lv_max&nbsp;=&nbsp;lv_max&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn1&nbsp;LINES&nbsp;lv_max.<br />
+&nbsp;&nbsp;DATA&nbsp;ls_line2&nbsp;TYPE&nbsp;ztrn_t002.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'QF05_RANDOM_INTEGER'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_max&nbsp;&nbsp;&nbsp;=&nbsp;lv_max2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_min&nbsp;&nbsp;&nbsp;=&nbsp;lv_min2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_rnd2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invalid_input&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+<br />
+<br />
+&nbsp;&nbsp;ls_line2&nbsp;=&nbsp;gt_trn2[&nbsp;lv_rnd2&nbsp;&nbsp;].<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_line2&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;gt_trn2&nbsp;INTO&nbsp;DATA(ls_line).<br />
+<br />
+*SELECT&nbsp;*&nbsp;FROM&nbsp;ztrn_t003&nbsp;INTO&nbsp;TABLE&nbsp;gt_trn3.<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;gt_trn1&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;2.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;2&nbsp;times.<br />
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;gt_trn1&nbsp;LINES&nbsp;lv_max.<br />
+&nbsp;&nbsp;DATA&nbsp;ls_line11&nbsp;TYPE&nbsp;ztrn_t001.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'QF05_RANDOM_INTEGER'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_max&nbsp;&nbsp;&nbsp;=&nbsp;lv_max<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int_min&nbsp;&nbsp;&nbsp;=&nbsp;lv_min<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ran_int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_rnd<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invalid_input&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+<br />
+<br />
+&nbsp;&nbsp;ls_line11&nbsp;=&nbsp;gt_trn1[&nbsp;lv_rnd&nbsp;].<br />
+<br />
+&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;if&nbsp;gs_trn7-teamid2&nbsp;eq&nbsp;space.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn7-matchh&nbsp;=&nbsp;'A'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;gs_trn7-teamid2&nbsp;=&nbsp;ls_line2-teamid.<br />
+gs_trn7-teamname2 = ls_line2-teamname.<br />
+gs_trn7-personid21 = ls_line11-id.<br />
+gs_trn7-pname21 = ls_line11-name.<br />
+gs_trn7-psurname21 = ls_line11-surname.<br />
+DELETE gt_trn7 WHERE matchh eq space.<br />
+DELETE gt_trn1 WHERE id = ls_line11-id.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_line11-deletelog&nbsp;NE&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_line11-deletelog&nbsp;=&nbsp;'X'.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn1&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;ls_line1-id.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t001&nbsp;FROM&nbsp;ls_line11.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_line2-deletelog&nbsp;NE&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_line2-deletelog&nbsp;=&nbsp;'X'.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn1&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;ls_line1-id.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t002&nbsp;FROM&nbsp;ls_line2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+else.<br />
+<br />
+gs_trn7-personid22 = ls_line11-id.<br />
+gs_trn7-pname22 = ls_line11-name.<br />
+gs_trn7-psurname22 = ls_line11-surname.<br />
+<br />
+DELETE gt_trn2 WHERE teamid = ls_line2-teamid.<br />
+DELETE gt_trn1 WHERE id = ls_line11-id.<br />
+&nbsp;DELETE&nbsp;gt_trn7&nbsp;WHERE&nbsp;personid22&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_line11-deletelog&nbsp;NE&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_line11-deletelog&nbsp;=&nbsp;'X'.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn1&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;ls_line1-id.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t001&nbsp;FROM&nbsp;ls_line11.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+endif.<br />
+<br />
+append gs_trn7 TO gt_trn7.<br />
+<br />
+modify ztrn_t007 from gs_trn7.<br />
+<br />
+&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+&nbsp;&nbsp;enddo.<br />
+&nbsp;&nbsp;endif.<br />
+&nbsp;&nbsp;endif.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*if&nbsp;gs_trn7-teamid1&nbsp;eq&nbsp;space&nbsp;.<br />
+*<br />
+*<br />
+*gs_trn7-teamid1&nbsp;=&nbsp;ls_line-teamid.<br />
+*gs_trn7-teamname1&nbsp;=&nbsp;ls_line-teamname.<br />
+*gs_trn7-personid11&nbsp;=&nbsp;ls_line1-id.<br />
+*gs_trn7-pname11&nbsp;=&nbsp;ls_line1-name.<br />
+*gs_trn7-psurname11&nbsp;=&nbsp;ls_line1-surname.<br />
+*DELETE&nbsp;gt_trn1&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;ls_line1-id.<br />
+*else.<br />
+*<br />
+*gs_trn7-personid12&nbsp;=&nbsp;ls_line1-id.<br />
+*gs_trn7-pname12&nbsp;=&nbsp;ls_line1-name.<br />
+*gs_trn7-psurname12&nbsp;=&nbsp;ls_line1-surname.<br />
+*<br />
+*DELETE&nbsp;gt_trn2&nbsp;WHERE&nbsp;teamid&nbsp;=&nbsp;ls_line-teamid.<br />
+*DELETE&nbsp;gt_trn1&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;ls_line1-id.<br />
+*&nbsp;delete&nbsp;gt_trn7&nbsp;where&nbsp;personid12&nbsp;=&nbsp;0.<br />
+*<br />
+*<br />
+*endif.<br />
+*APPEND&nbsp;gs_trn7&nbsp;TO&nbsp;gt_trn7.<br />
+*modify&nbsp;ztrn_t007&nbsp;from&nbsp;gs_trn7.<br />
+*&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+*<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;gs_trn4-teamid1&nbsp;EQ&nbsp;space.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamid1&nbsp;=&nbsp;ls_line-teamid.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamname1&nbsp;=&nbsp;ls_line-teamname.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamid&nbsp;&nbsp;=&nbsp;gs_trn4-teamid1.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamname&nbsp;=&nbsp;gs_trn4-teamname1.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-deletelog&nbsp;=&nbsp;'&nbsp;'.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamid2&nbsp;=&nbsp;ls_line-teamid.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamname2&nbsp;=&nbsp;ls_line-teamname.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamid&nbsp;&nbsp;=&nbsp;gs_trn4-teamid2.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamname&nbsp;=&nbsp;gs_trn4-teamname2.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn2&nbsp;WHERE&nbsp;teamid&nbsp;=&nbsp;ls_line-teamid.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t002&nbsp;FROM&nbsp;ls_line1.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+*<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t005&nbsp;FROM&nbsp;gs_trn4.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;FROM&nbsp;ztrn_t005&nbsp;&nbsp;WHERE&nbsp;teamid2&nbsp;=&nbsp;0.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;gs_trn3-personid&nbsp;ne&nbsp;lv_rnd<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;lv_i&nbsp;=&nbsp;0&nbsp;OR&nbsp;gt_trn1&nbsp;IS&nbsp;INITIAL.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+*&nbsp;ENDDO.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*************************<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t001&nbsp;FROM&nbsp;ls_line1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t002&nbsp;FROM&nbsp;ls_line.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'NUMBER_GET_NEXT'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nr_range_nr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'01'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'ZTRN_NO'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;gs_trn4-seqno<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interval_not_found&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number_range_not_intern&nbsp;=&nbsp;2<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object_not_found&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quantity_is_0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quantity_is_not_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interval_overflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer_overflow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;7<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;8.<br />
+<br />
+<br />
+<br />
+<br />
+*if&nbsp;gs_trn4-teamid1&nbsp;eq&nbsp;ls_line-teamid&nbsp;or&nbsp;gs_trn4-teamid2&nbsp;eq&nbsp;ls_line-teamid.<br />
+*do&nbsp;2&nbsp;times.<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;gs_trn4-teamid1&nbsp;EQ&nbsp;space.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamid1&nbsp;=&nbsp;ls_line-teamid.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamname1&nbsp;=&nbsp;ls_line-teamname.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamid&nbsp;&nbsp;=&nbsp;gs_trn4-teamid1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamname&nbsp;=&nbsp;gs_trn4-teamname1.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-deletelog&nbsp;=&nbsp;'&nbsp;'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamid2&nbsp;=&nbsp;ls_line-teamid.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn4-teamname2&nbsp;=&nbsp;ls_line-teamname.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamid&nbsp;&nbsp;=&nbsp;gs_trn4-teamid2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-teamname&nbsp;=&nbsp;gs_trn4-teamname2.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn2&nbsp;WHERE&nbsp;teamid&nbsp;=&nbsp;ls_line-teamid.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t002&nbsp;FROM&nbsp;ls_line1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t005&nbsp;FROM&nbsp;gs_trn4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;FROM&nbsp;ztrn_t005&nbsp;&nbsp;WHERE&nbsp;teamid2&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;gs_trn2-deletelog&nbsp;NE&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_i&nbsp;=&nbsp;&nbsp;&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn2-deletelog&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t002&nbsp;FROM&nbsp;gs_trn2.<br />
+   </div>
+   <div class="codeComment">
+********************************&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_trn2&nbsp;WHERE&nbsp;teamid&nbsp;=&nbsp;gs_trn2-teamid&nbsp;.<br />
+*******&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UPDATE&nbsp;ztrn_t003&nbsp;FROM&nbsp;gs_trn3.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;gs_trn&nbsp;=&nbsp;gt_trn[&nbsp;lv_RndI&nbsp;].<br />
+<br />
+<br />
+*&nbsp;&nbsp;WRITE&nbsp;:/&nbsp;lv_rnd.<br />
+*<br />
+*&nbsp;&nbsp;lv_i&nbsp;=&nbsp;lv_i&nbsp;-&nbsp;1.<br />
+*<br />
+*ENDWHILE.<br />
+<br />
+<br />
+***&nbsp;&nbsp;lv_u&nbsp;=&nbsp;strlen(&nbsp;gs_trn-deletelog&nbsp;).<br />
+**<br />
+**&nbsp;&nbsp;gs_trn-id&nbsp;=&nbsp;lv_rnd.<br />
+**<br />
+**&nbsp;&nbsp;IF&nbsp;gs_trn-id&nbsp;EQ&nbsp;lv_rnd&nbsp;AND&nbsp;gs_trn-deletelog&nbsp;is&nbsp;INITIAL.<br />
+**<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;read&nbsp;table&nbsp;gt_trn&nbsp;into&nbsp;gs_trn&nbsp;with&nbsp;key&nbsp;gs_trn-id.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;gt_trn&nbsp;INTO&nbsp;gs_trn.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_trn-deletelog&nbsp;=&nbsp;'X'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ztrn_t001&nbsp;FROM&nbsp;gs_trn.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ztrn_t001&nbsp;INTO&nbsp;gs_trn&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;gs_trn-id.<br />
+**&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;Hard&nbsp;coded<br />
+*&nbsp;&nbsp;&nbsp;Tüm&nbsp;takýmlar&nbsp;dolu.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
